@@ -10,6 +10,7 @@ class Post(models.Model):
         related_name='posts',
         on_delete=models.CASCADE
     )
+    categories = models.ManyToManyField('Category')
     objects = models.Manager()
 
     class Meta:
@@ -31,3 +32,15 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'{self.owner} - {self.post}'
+
+
+class Category(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    title = models.CharField(max_length=100)
+    objects = models.Manager()
+
+    class Meta:
+        verbose_name_plural = 'categories'
+
+    def __str__(self):
+        return self.title
