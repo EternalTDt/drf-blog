@@ -1,8 +1,8 @@
 from rest_framework import generics, permissions
-from .serializers import UserSerializer, PostSerializer
+from .serializers import UserSerializer, PostSerializer, CommentSerializer
 from django.contrib.auth.models import User
 from .permissions import IsOwnerOrReadOnly
-from .models import Post
+from .models import Post, Comment
 
 
 class UserList(generics.ListAPIView):
@@ -30,3 +30,18 @@ class PostDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly,
                           IsOwnerOrReadOnly]
 
+
+class CommentList(generics.ListCreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+
+class CommentDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly,
+                          IsOwnerOrReadOnly]
